@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.price.model.Lancamento;
 import com.price.repository.LancamentoRepository;
-import com.price.repository.LancamentoRepositoryQuery;
 
 @RestController
 @RequestMapping("/lancamentos")
@@ -26,9 +25,6 @@ public class LancamentoResource {
 
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
-	
-	@Autowired
-	private LancamentoRepositoryQuery lancamentoRepositoryQuery;
 	
 	
 	@GetMapping
@@ -47,9 +43,10 @@ public class LancamentoResource {
 	
 	@GetMapping("/usuario/{id}")
 	public ResponseEntity<List<Lancamento>> buscarPorUsuarioId(@PathVariable Long id) {
-		List<Lancamento> lancamentos = lancamentoRepositoryQuery.findById(id.toString());
+		List<Lancamento> lancamentos = lancamentoRepository.pesquisar(id);
 		
-		return lancamentos != null ? ResponseEntity.status(HttpStatus.OK).body(lancamentos) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		return lancamentos != null && !lancamentos.isEmpty() ? ResponseEntity.status(HttpStatus.OK).body(lancamentos) 
+				: ResponseEntity.status(HttpStatus.NOT_FOUND).build();
 	}
 	
 	@PostMapping
